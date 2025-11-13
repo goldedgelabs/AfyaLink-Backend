@@ -1,76 +1,84 @@
-// Append to backend/shared/prisma/schema.prisma
-
-model Encounter {
-  id          Int      @id @default(autoincrement())
-  patientId   Int
-  doctorId    Int?
-  hospitalId  Int?
-  visitType   String   // outpatient, inpatient, telehealth
-  reason      String?
-  notes       String?
-  startAt     DateTime
-  endAt       DateTime?
-  createdAt   DateTime @default(now())
-
-  Patient Patient @relation(fields: [patientId], references: [id])
-
-  @@index([patientId])
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
-model LabResult {
-  id          Int      @id @default(autoincrement())
-  patientId   Int
-  encounterId Int?
-  testName    String
-  result      String
-  units       String?
-  referenceRange String?
-  collectedAt DateTime
-  reportedAt  DateTime?
-  status      String   @default("final") // pending, final, corrected
-  meta        Json?
-  createdAt   DateTime @default(now())
-
-  Patient Patient @relation(fields: [patientId], references: [id])
+generator client {
+  provider = "prisma-client-js"
 }
 
-model Prescription {
-  id          Int      @id @default(autoincrement())
-  patientId   Int
-  prescriberId Int?
-  drugs       Json     // [{name, dose, freq, duration}]
-  notes       String?
-  issuedAt    DateTime @default(now())
-  status      String   @default("active") // active, stopped, completed
-  createdAt   DateTime @default(now())
-
-  Patient Patient @relation(fields: [patientId], references: [id])
-}
-
-model Consent {
-  id          Int      @id @default(autoincrement())
-  patientId   Int
-  scope       String   // "share_records", "research", etc
-  granted     Boolean
-  grantedBy   Int?     // user id
-  grantedAt   DateTime?
-  revokedAt   DateTime?
-  meta        Json?
-  createdAt   DateTime @default(now())
-
-  Patient Patient @relation(fields: [patientId], references: [id])
-}
-
-model DeviceTelemetry {
+// Users & Roles
+model User {
   id        Int      @id @default(autoincrement())
-  deviceId  String
-  patientId Int?
-  metric    String   // heart_rate, bp_sys, bp_dia, glucose
-  value     Float
-  unit      String?
-  ts        DateTime
+  fullName  String
+  email     String   @unique
+  password  String
+  role      String   @default("patient") // patient, doctor, admin, superadmin
+  phone     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// Hospitals & Labs
+model Hospital {
+  id        Int      @id @default(autoincrement())
+  name      String
+  location  String?
+  createdAt DateTime @default(now())
+}
+
+model Lab {
+  id        Int      @id @default(autoincrement())
+  name      String
+  hospital  Hospital @relation(fields: [hospitalId], references: [id])
+  hospitalId Int
+  createdAt DateTime @default(now())
+}
+
+// Patients & Appointments
+model Patient {
+  id        Int      @id @default(autoincrement())
+  fullName  String
+  dob       DateTime?
+  gender    String?
+  notes     String?
+  hospital  Hospital? @relation(fields: [hospitalId], references: [id])
+  hospitalId Int?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Appointment {
+  id         Int      @id @default(autoincrement())
+  patient    Patient  @relation(fields: [patientId], references: [id])
+  patientId  Int
+  doctor     User?    @relation(fields: [doctorId], references: [id])
+  doctorId   Int?
+  date       DateTime
+  notes      String?
+  status     String   @default("scheduled") // scheduled, done, canceled
+  createdAt  DateTime @default(now())
+}
+
+// Lab results
+model LabResult {
+  id        Int      @id @default(autoincrement())
+  lab       Lab      @relation(fields: [labId], references: [id])
+  labId     Int
+  patient   Patient  @relation(fields: [patientId], references: [id])
+  patientId Int
+  type      String
+  value     String
+  notes     String?
+  createdAt DateTime @default(now())
+}
+
+// Audit
+model AuditLog {
+  id        Int      @id @default(autoincrement())
+  userId    Int?
+  action    String
+  entity    String?
   meta      Json?
   createdAt DateTime @default(now())
-
-  Patient? Patient @relation(fields: [patientId], references: [id])
 }

@@ -1,0 +1,1 @@
+const express = require('express'); const app = express(); app.use(express.json()); app.use('/staff', require('./routes/staff')); const PORT = process.env.PORT||4004; app.listen(PORT, ()=>console.log('Staff service',PORT));

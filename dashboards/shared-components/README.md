@@ -1,0 +1,2 @@
+# shared-components
+Placeholder dashboard

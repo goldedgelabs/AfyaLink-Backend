@@ -1,0 +1,12 @@
+{
+  "name": "afyalink-backend-monorepo",
+  "version": "1.0.0",
+  "private": true,
+  "workspaces": [
+    "services/*",
+    "shared/*"
+  ],
+  "scripts": {
+    "start": "node gateway/src/index.js"
+  }
+}

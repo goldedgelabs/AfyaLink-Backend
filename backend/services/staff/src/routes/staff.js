@@ -1,0 +1,1 @@
+const r = require('express').Router(); const ctl = require('../controllers/staffController'); r.get('/', ctl.list); r.post('/', ctl.create); module.exports = r;

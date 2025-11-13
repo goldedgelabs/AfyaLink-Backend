@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: afyalink-backend
+    env: node
+    plan: free
+    buildCommand: cd backend && npm ci --omit=dev && npx prisma generate --schema=shared/prisma/schema.prisma || true
+    startCommand: node gateway/src/index.js
+    envVars:
+      - key: DATABASE_URL
+      - key: OPENAI_API_KEY
+      - key: JWT_SECRET

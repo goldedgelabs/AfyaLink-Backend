@@ -1,0 +1,13 @@
+{
+  "name": "afyalink-users-service",
+  "version": "1.0.0",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "bcryptjs": "^2.4.3",
+    "@prisma/client": "*"
+  }
+}

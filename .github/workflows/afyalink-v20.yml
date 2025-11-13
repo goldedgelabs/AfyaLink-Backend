@@ -1,0 +1,17 @@
+name: AfyaLink v20 CI
+on: [push]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with: node-version: '20'
+      - name: Install backend deps
+        run: |
+          cd backend
+          npm ci --omit=dev || true
+      - name: Generate Prisma client
+        run: |
+          cd backend && npx prisma generate --schema=shared/prisma/schema.prisma || true

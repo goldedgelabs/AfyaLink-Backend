@@ -1,0 +1,1 @@
+const express = require('express'); const app = express(); app.use(express.json()); app.use('/hospitals', require('./routes/hospital')); const PORT = process.env.PORT||4003; app.listen(PORT, ()=>console.log('Hospitals service',PORT));

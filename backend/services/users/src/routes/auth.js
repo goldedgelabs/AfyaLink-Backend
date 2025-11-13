@@ -1,0 +1,1 @@
+const r = require('express').Router(); const ctl = require('../controllers/userController'); r.post('/register', ctl.register); r.post('/login', ctl.login); r.get('/me', ctl.me); module.exports = r;

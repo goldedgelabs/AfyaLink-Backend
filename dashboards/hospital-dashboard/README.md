@@ -1,0 +1,2 @@
+# hospital-dashboard
+Placeholder dashboard

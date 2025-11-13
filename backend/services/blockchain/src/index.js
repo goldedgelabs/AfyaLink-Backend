@@ -1,0 +1,1 @@
+const express = require('express'); const app = express(); app.use(express.json()); app.use('/blockchain', require('./routes/blockchain')); const PORT = process.env.PORT||4010; app.listen(PORT, ()=>console.log('Blockchain service on',PORT));

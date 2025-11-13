@@ -1,11 +1,76 @@
-datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
-}
-generator client { provider = "prisma-client-js" }
+// Append to backend/shared/prisma/schema.prisma
 
-model User { id Int @id @default(autoincrement()) name String email String @unique password String role String @default("patient") createdAt DateTime @default(now()) updatedAt DateTime @updatedAt }
-model Hospital { id Int @id @default(autoincrement()) name String location String? createdAt DateTime @default(now()) }
-model Patient { id Int @id @default(autoincrement()) fullName String dob DateTime? gender String? hospitalId Int? createdAt DateTime @default(now()) updatedAt DateTime @updatedAt }
-model Appointment { id Int @id @default(autoincrement()) patientId Int doctorId Int? date DateTime notes String? status String @default("scheduled") createdAt DateTime @default(now()) }
-model AuditLog { id Int @id @default(autoincrement()) userId Int? action String entity String? meta Json? createdAt DateTime @default(now()) }
+model Encounter {
+  id          Int      @id @default(autoincrement())
+  patientId   Int
+  doctorId    Int?
+  hospitalId  Int?
+  visitType   String   // outpatient, inpatient, telehealth
+  reason      String?
+  notes       String?
+  startAt     DateTime
+  endAt       DateTime?
+  createdAt   DateTime @default(now())
+
+  Patient Patient @relation(fields: [patientId], references: [id])
+
+  @@index([patientId])
+}
+
+model LabResult {
+  id          Int      @id @default(autoincrement())
+  patientId   Int
+  encounterId Int?
+  testName    String
+  result      String
+  units       String?
+  referenceRange String?
+  collectedAt DateTime
+  reportedAt  DateTime?
+  status      String   @default("final") // pending, final, corrected
+  meta        Json?
+  createdAt   DateTime @default(now())
+
+  Patient Patient @relation(fields: [patientId], references: [id])
+}
+
+model Prescription {
+  id          Int      @id @default(autoincrement())
+  patientId   Int
+  prescriberId Int?
+  drugs       Json     // [{name, dose, freq, duration}]
+  notes       String?
+  issuedAt    DateTime @default(now())
+  status      String   @default("active") // active, stopped, completed
+  createdAt   DateTime @default(now())
+
+  Patient Patient @relation(fields: [patientId], references: [id])
+}
+
+model Consent {
+  id          Int      @id @default(autoincrement())
+  patientId   Int
+  scope       String   // "share_records", "research", etc
+  granted     Boolean
+  grantedBy   Int?     // user id
+  grantedAt   DateTime?
+  revokedAt   DateTime?
+  meta        Json?
+  createdAt   DateTime @default(now())
+
+  Patient Patient @relation(fields: [patientId], references: [id])
+}
+
+model DeviceTelemetry {
+  id        Int      @id @default(autoincrement())
+  deviceId  String
+  patientId Int?
+  metric    String   // heart_rate, bp_sys, bp_dia, glucose
+  value     Float
+  unit      String?
+  ts        DateTime
+  meta      Json?
+  createdAt DateTime @default(now())
+
+  Patient? Patient @relation(fields: [patientId], references: [id])
+}

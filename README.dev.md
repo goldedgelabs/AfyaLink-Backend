@@ -1,2 +1,1 @@
-# AfyaLink-Backend-v20
-Scaffold generated.
+// Placeholder content for README.dev.md

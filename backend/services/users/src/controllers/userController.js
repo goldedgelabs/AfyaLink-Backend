@@ -1,4 +1,1 @@
-const { PrismaClient } = require('@prisma/client'); const bcrypt = require('bcryptjs'); const prisma = new PrismaClient();
-exports.register = async (req,res)=>{ const { name,email,password,role } = req.body||{}; if(!email||!password) return res.status(400).json({message:'missing'}); const hashed = await bcrypt.hash(password,10); const user = await prisma.user.create({ data:{ name, email, password: hashed, role } }); res.json({ ok:true, user:{ id:user.id, email:user.email, role:user.role } }); };
-exports.login = async (req,res)=>{ const { email,password } = req.body||{}; const user = await prisma.user.findUnique({ where:{ email } }).catch(()=>null); if(!user) return res.status(401).json({ message:'Invalid' }); const ok = await bcrypt.compare(password, user.password); if(!ok) return res.status(401).json({ message:'Invalid' }); res.json({ ok:true, token:'dev-token' }); };
-exports.me = async (req,res)=>{ const id = req.user && req.user.id; const u = id ? await prisma.user.findUnique({ where:{ id } }).catch(()=>null) : null; res.json({ ok:true, user: u }); };
+// Placeholder content for userController.js

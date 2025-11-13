@@ -1,2 +1,1 @@
-const { PrismaClient } = require('@prisma/client'); const bcrypt = require('bcryptjs'); const prisma = new PrismaClient();
-(async function seed(){ const pw = process.env.SEED_SUPER_PASSWORD || 'SuperAdmin@2025'; const hashed = await bcrypt.hash(pw,10); const email = process.env.SEED_SUPER_EMAIL || 'admin@afyalink.com'; try{ const exists = await prisma.user.findUnique({ where:{ email } }); if(!exists){ await prisma.user.create({ data:{ name:'Super Admin', email, password: hashed, role: 'super_admin' } }); console.log('Super admin created'); } else console.log('Super admin exists'); }catch(e){ console.error('Seed error', e); } finally { await prisma.$disconnect(); } })();
+// Placeholder content for seed.js

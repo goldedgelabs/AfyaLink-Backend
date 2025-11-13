@@ -1,1 +1,1 @@
-const r = require('express').Router(); const ctl = require('../controllers/patientController'); r.get('/', ctl.list); r.post('/', ctl.create); module.exports = r;
+// Placeholder content for patient.js

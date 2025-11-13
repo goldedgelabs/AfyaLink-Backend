@@ -1,1 +1,1 @@
-const { PrismaClient } = require('@prisma/client'); const prisma = new PrismaClient(); exports.list = async (req,res)=>{ const list = await prisma.hospital.findMany().catch(()=>[]); res.json({ ok:true, data: list }); }; exports.create = async (req,res)=>{ const h = req.body; const created = await prisma.hospital.create({ data: h }).catch(()=>null); res.json({ ok: !!created, hospital: created }); };
+// Placeholder content for hospitalController.js
